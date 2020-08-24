@@ -1,0 +1,61 @@
+/ 动态规划填充矩阵实现， （1）分治 （2）问题的解依赖于子问题的解 （3）这个方法共长度为1，2，3，4，5 依次扩展， 每一次的结果和之前取得的结果有关。，斜三角上升。
+class Solution {
+    public String longestPalindrome(String s) {
+        int strlength = s.length();
+        boolean[][] dp = new boolean[strlength][strlength];
+         String result = "";
+         for(int l = 0 ; l < strlength; l++){
+             for(int i = 0; i + l < strlength ; i++){
+                 int j = i+l;
+                 // 如果L的长度为1
+                 if(l == 0){
+                    dp[i][j] = true;
+                 }else if(l == 1){
+                    dp[i][j] = (s.charAt(i)==s.charAt(j));
+                 }else{
+                    dp[i][j] = (dp[i+1][j-1] && (s.charAt(i) == s.charAt(j)));
+                 }
+                 if(dp[i][j] && l+1>result.length()){
+                    result = s.substring(i,j+1);
+                 }
+             }
+         }
+
+    return result;
+
+    }
+}
+
+// 中心扩展法。
+
+class Solution {
+    public String longestPalindrome(String s) {
+        if(s.length() < 1 ) return "";
+        int start = 0 , end = 0;
+        for(int i = 0 ; i < s.length(); i++){
+           // 边界行为两种： 需要初始化的形状。
+           int len1 = expand(i,i,s);
+           int len2  = expand(i,i+1,s);
+           int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
+            }
+        }
+        return s.substring(start, end + 1);
+
+
+    }
+
+    public int expand(int left, int right, String s){
+       int len = 0;
+       int l = left, r = right;
+       while(l >=0 && r < s.length() && s.charAt(l) == s.charAt(r)){
+            l--;
+            r++;
+
+       }
+       len = r-l-1;
+       return len;
+    }
+}
