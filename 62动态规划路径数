@@ -17,3 +17,31 @@ class Solution {
 
     }
 }
+
+// 滑动数组的方法   用一维数组表示最终到达的路径的条数，减少内存的利用率。
+// 循环每一行，一次得到每一行的f(i)值，表示当前节点的从原始节点开始的路径数。
+// f[j] += f[j - 1];  f[j]表示经过下移到达当前节点，相当于之前的d[i-1][j],而F[j-1]表示经过右移到达当前节点，相当于d[i][j-1]
+// 出现没有左邻居的情况，比如左邻居越界或者左邻居是墙，则直接从上一层，即直接等于d[i-1][j]的值。
+
+class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int n = obstacleGrid.length, m = obstacleGrid[0].length;
+        int[] f = new int[m];
+
+        f[0] = obstacleGrid[0][0] == 0 ? 1 : 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if (obstacleGrid[i][j] == 1) {
+                    f[j] = 0;
+                    continue;
+                }
+                if (j - 1 >= 0 && obstacleGrid[i][j - 1] == 0) {
+                    f[j] += f[j - 1];
+                }
+            }
+        }
+        
+        return f[m - 1];
+    }
+}
+
