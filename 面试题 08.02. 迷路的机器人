@@ -1,0 +1,51 @@
+class Solution {
+    // path 记录经过的坐标位置
+    List<List<Integer>> path = new LinkedList<>(); // 记录路径 
+    int row = 0;
+    int col = 0;
+    
+    // 我们进行的都是在末尾进行删除和添加操作，时间复杂度暂时不考虑，Arraylist也阔以
+    public List<List<Integer>> pathWithObstacles(int[][] obstacleGrid) {
+        row = obstacleGrid.length;
+        col = obstacleGrid[0].length;
+        // 网格为空,返回空路径
+        if(row == 0){
+            return path;
+        }
+        // 网格重点有障碍
+        if(obstacleGrid[row-1][col-1]==1){
+            return path;
+        }
+        //  定义二维visit数组
+        boolean[][]  visited = new boolean[row][col];
+
+        // 开始添加路径
+        getPath(obstacleGrid,0,0,visited);
+        return path;
+        }
+
+    public boolean getPath(int[][] obstacleGrid,int x, int y, boolean[][] visit){
+        // 判断当前节点的情况， 访问过不能访问，越界不访问，是墙这条路径作废。
+        if (x >= row || y >= col || obstacleGrid[x][y] == 1 || visit[x][y]) {
+            return false;
+        }
+
+        // 将当前节点添加到路径中， 之后判断其向下或者向右走是否能走通
+       
+        path.add(Arrays.asList(x,y));
+        visit[x][y] = true;
+        if (x == row - 1 && y == col - 1) {
+            return true;
+        }
+        // 访问节点的右边节点和下边节点，查看路径是否能走通
+        if(getPath(obstacleGrid, x+1, y, visit) || getPath(obstacleGrid, x, y+1, visit)){
+            return true;
+        }
+
+        // 如果不能访问这个节点后的右边节点和下边节点，那么此路径不通
+        path.remove(path.size()-1);
+        return false;
+
+    }
+
+}
