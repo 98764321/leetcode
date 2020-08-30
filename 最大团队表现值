@@ -1,0 +1,34 @@
+class Solution {
+    public int maxPerformance(int n, int[] speed, int[] efficiency, int k) {
+        // 有效率和速度两个变量，需要先定住一个，选另一个
+        // 选出K个工程师，团队表现值最大， 最小的效率 * 速度之和, 求团队表现的最大值
+        // 先对K个工程师的效率进行从高到低的排序，每次选取一个作为最新小效率，然后从前边大于k-1个工程师中
+        //  选择前k-1大的速度的工程师，和这个最小概率进行相乘。
+        //  速度制造 最小堆，长度为K-1,每次出现较大的速度时，将最小的速度分割出去。
+        //  JAVA PriorityQueue  二叉小顶堆
+        int[][] items = new int[n][2];
+        for(int i = 0 ; i< n; i++){
+            items[i][0] = speed[i];
+            items[i][1] = efficiency[i];
+        }
+        // 对效率进行排序，实现comparator接口  
+        Arrays.sort(items,new Comparator<int []>(){
+           public int compare(int[] a, int[] b){
+               return b[1] - a[1];
+           }
+        });
+        // 创建小顶堆  按照速度排完序。第二列按照第一列
+       PriorityQueue<Integer> queue = new PriorityQueue<>();
+       // 依次选取每一个工程师作为效率最小的工程师
+       long res = 0, sum = 0;
+       for(int i = 0 ; i < n; i++){
+           if(queue.size() > k-1){
+               sum -= queue.poll();
+           }
+           res = Math.max(res, (sum + items[i][0])* items[i][1]);
+           queue.add(items[i][0]);
+           sum += items[i][0];
+       }
+    return (int)(res % ((int)1e9 + 7));
+    }
+}
